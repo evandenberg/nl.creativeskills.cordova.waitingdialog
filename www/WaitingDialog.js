@@ -1,7 +1,8 @@
 /*global module,cordova,require */
 
 var cordova = require('cordova'),
-    exec = require('cordova/exec');
+    exec = require('cordova/exec'),
+    waitingDialog;
 
 (function () {
     'use strict';
@@ -17,7 +18,7 @@ var cordova = require('cordova'),
 		exec(null, null, "WaitingDialog", "hide", []);
 	};
 
-	var waitingDialog = new WaitingDialog();
+	waitingDialog = new WaitingDialog();
 
 	module.exports = waitingDialog;
 

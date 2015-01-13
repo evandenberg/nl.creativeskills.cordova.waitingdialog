@@ -1,12 +1,12 @@
 package nl.creativeskills.cordova.waitingdialog;
 
+import android.app.ProgressDialog;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.LOG;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -17,26 +17,31 @@ public class WaitingDialog extends CordovaPlugin {
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if ("show".equals(action)) {
-            String text = "Please wait";
-            try {
-                text = args.getString(0);
-            } catch (Exception e) {
-                LOG.d("WaitingDialog", "Text parameter not valid, using default");
-            }
-            showWaitingDialog(text);
-            callbackContext.success();
-            return true;
-        } else if ("hide".equals(action)) {
-            hideWaitingDialog();
-            callbackContext.success();
-            return true;
-        } else if ("canceled".equals(action)) {
-            hideWaitingDialog();
-            callbackContext.success();
-            return true;
+
+        switch ( action )
+        {
+            case "show":
+                String text = "Please wait";
+                try {
+                    text = args.getString(0);
+                } catch (Exception e) {
+                    LOG.d("WaitingDialog", "Text parameter not valid, using default");
+                }
+                showWaitingDialog(text);
+                callbackContext.success();
+                return true;
+            case "hide":
+                hideWaitingDialog();
+                callbackContext.success();
+                return true;
+            case "canceled":
+                hideWaitingDialog();
+                callbackContext.success();
+                return true;
+            default:
+                callbackContext.error("None existing method");
+                return false;
         }
-        return false;
     }
     
     public void showWaitingDialog(String text) {
