@@ -1,6 +1,9 @@
 package nl.creativeskills.cordova.waitingdialog;
 
 import android.app.ProgressDialog;
+import android.os.Build;
+import android.view.ContextThemeWrapper;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.LOG;
@@ -12,8 +15,7 @@ import org.json.JSONException;
  * This class echoes a string called from JavaScript.
  */
 public class WaitingDialog extends CordovaPlugin {
-
-    private ProgressDialog waitingDialog = null;
+    private ProgressDialog progressDialog;
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -44,21 +46,32 @@ public class WaitingDialog extends CordovaPlugin {
         }
     }
     
-    public void showWaitingDialog(String text) {
-        if (waitingDialog != null) {
-            waitingDialog.setMessage( text );
+    public void showWaitingDialog(String text)
+    {
+
+        if ( progressDialog != null )
+        {
+            progressDialog.setMessage( text );
             LOG.d("WaitingDialog", "Dialog updated message");
         } else {
-            waitingDialog = ProgressDialog.show(this.cordova.getActivity(), "", text);
+
+            if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+            {
+                progressDialog = new ProgressDialog(new ContextThemeWrapper( this.cordova.getActivity() , android.R.style.Theme_Holo_Light_Dialog));
+            } else {
+                progressDialog = new ProgressDialog( this.cordova.getActivity() );
+            }
+
+            progressDialog.setMessage( text );
+            progressDialog.show();
             LOG.d("WaitingDialog", "Dialog shown, waiting hide command");
         }
     }
     
     public void hideWaitingDialog() {
-        if (waitingDialog != null) {
-            waitingDialog.dismiss();
+        if ( progressDialog != null ) {
+            progressDialog.dismiss();
             LOG.d("WaitingDialog", "Dialog dismissed");
-            waitingDialog = null;
         } else {
             LOG.d("WaitingDialog", "Nothing to dismiss");
         }
